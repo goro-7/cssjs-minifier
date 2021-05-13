@@ -21,8 +21,8 @@ public class GoogleClosureCompilerJSCompressor implements JSCompressor {
 	public String compress(final String inputFilename, final JSCompileType compileType) throws Exception {
 		final Compiler compiler = new Compiler();
 		final CompilerOptions options = new CompilerOptions();
-		options.setLanguageIn(LanguageMode.ECMASCRIPT5);
-		options.setLanguageOut(LanguageMode.ECMASCRIPT5);
+		options.setLanguageIn(LanguageMode.STABLE_IN); //todo : takes this from config
+		options.setLanguageOut(LanguageMode.STABLE_OUT);
 
 		if (JSCompileType.WHITESPACE.equals(compileType)) {
 			CompilationLevel.WHITESPACE_ONLY.setOptionsForCompilationLevel(options);
@@ -35,12 +35,12 @@ public class GoogleClosureCompilerJSCompressor implements JSCompressor {
 		List<SourceFile> list = null;
 
 		try {
-			list = AbstractCommandLineRunner.getBuiltinExterns(options);
+			list = AbstractCommandLineRunner.getBuiltinExterns(CompilerOptions.Environment.CUSTOM);
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 
-		list.add(SourceFile.fromFile(new File(inputFilename)));
+		list.add(SourceFile.fromFile(inputFilename));
 		compiler.compile(new ArrayList<SourceFile>(), list, options);
 
 		return compiler.toSource();

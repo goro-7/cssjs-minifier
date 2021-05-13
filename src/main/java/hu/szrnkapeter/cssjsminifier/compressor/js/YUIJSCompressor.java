@@ -42,14 +42,11 @@ public class YUIJSCompressor implements JSCompressor {
 
 	@Override
 	public String compress(final String inputFilename, final JSCompileType compileType) throws Exception {
-		Reader in = new InputStreamReader(new FileInputStream(inputFilename), "UTF-8");
-		final JavaScriptCompressor compressor = new JavaScriptCompressor(in, new YuiCompressorErrorReporter());
-		in.close();
-		in = null;
-
-		final StringWriter out = new StringWriter();
-		compressor.compress(out, -1, true, false, false, false);
-
-		return out.toString();
+		try(Reader in = new InputStreamReader(new FileInputStream(inputFilename), "UTF-8")) {
+			final JavaScriptCompressor compressor = new JavaScriptCompressor(in, new YuiCompressorErrorReporter());
+			final StringWriter out = new StringWriter();
+			compressor.compress(out, -1, true, true, false, false);
+			return out.toString();
+		}
 	}
 }
